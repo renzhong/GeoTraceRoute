@@ -1,5 +1,7 @@
 # GeoTraceRoute
 
+geo info: https://ipinfo.io/
+
 # 使用方式
 
 1. python3 -m venv venv

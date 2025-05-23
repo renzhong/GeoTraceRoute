@@ -8,19 +8,11 @@ from rich.table import Table
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'query'))
 sys.path.append(os.path.join(os.path.dirname(__file__), 'utils'))
-from geo_lite_query import GeoLiteQuery
-from ip2city_query import IP2LocationLiteQuery
+
+from ipinfo_query import IpInfoQuery
 from utils import check_reserved_ip
-# from geo_query import get_location_by_coordinates
 
-geo_lite_path = '/Users/devin.zhang/test/ip_location/GeoLite/GeoLite2-City_20240202/GeoLite2-City.mmdb'
-geo_query = GeoLiteQuery(geo_lite_path)
-
-dbip_lite_path = '/Users/devin.zhang/test/ip_location/DbipLite/dbip-city-lite-2024-02.mmdb'
-dbip_query = GeoLiteQuery(dbip_lite_path)
-
-ip2loc_lite_path = '/Users/devin.zhang/test/ip_location/Ip2locationLite/IP2LOCATION-LITE-DB5.CSV'
-ip2loc_query = IP2LocationLiteQuery(ip2loc_lite_path)
+ipfifo_query = IpInfoQuery()
 
 console = Console()
 
@@ -137,7 +129,7 @@ def query(query_client, ip, name):
         return None
 
     country = result['country']
-    city = result['city']
+    city = result['city'] if 'city' in result else ''
     geo_info = GeoInfo(name, country, city)
 
     return geo_info
@@ -146,15 +138,7 @@ def process_line(line):
     line_obj = parse_traceroute_output(line)
 
     if line_obj.ip != '':
-        geo_info = query(geo_query, line_obj.ip, "MaxMind")
-        if geo_info is not None:
-            line_obj.geo_info_list.append(geo_info)
-
-        geo_info = query(dbip_query, line_obj.ip, "dbip")
-        if geo_info is not None:
-            line_obj.geo_info_list.append(geo_info)
-
-        geo_info = query(ip2loc_query, line_obj.ip, "ip2location")
+        geo_info = query(ipfifo_query, line_obj.ip, "ipinfo")
         if geo_info is not None:
             line_obj.geo_info_list.append(geo_info)
 

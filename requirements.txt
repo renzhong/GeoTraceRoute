@@ -1,3 +1,2 @@
-geoip2
-geopy
 rich
+ipinfo
